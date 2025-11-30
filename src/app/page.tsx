@@ -20,6 +20,8 @@ export default function Home() {
   }, [])
 
   async function loadRecentJobs() {
+    if (!supabase) return
+
     try {
       const { data } = await supabase
         .from('jobs')
@@ -48,7 +50,11 @@ export default function Home() {
 
     try {
       // Get user session (if exists)
-      const { data: { session } } = await supabase.auth.getSession()
+      let session = null
+      if (supabase) {
+        const { data } = await supabase.auth.getSession()
+        session = data
+      }
 
       // Create form data for API
       const formData = new FormData()
@@ -74,8 +80,8 @@ export default function Home() {
       const response = await fetch(`${apiUrl}/upload`, {
         method: 'POST',
         body: formData,
-        headers: session
-          ? { Authorization: `Bearer ${session.access_token}` }
+        headers: session?.session
+          ? { Authorization: `Bearer ${session.session.access_token || ''}` }
           : {}
       })
 
@@ -87,10 +93,10 @@ export default function Home() {
       const result = await response.json()
 
       // Update job with user ID if logged in
-      if (session?.user) {
+      if (session?.session?.user && supabase) {
         await supabase
           .from('jobs')
-          .update({ user_id: session.user.id })
+          .update({ user_id: session.session.user.id })
           .eq('id', result.job_id)
       }
 

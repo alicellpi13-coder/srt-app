@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, FileAudio, FileVideo, Settings, X, Plus } from 'lucide-react'
+import { Upload as UploadIcon, FileAudio, FileVideo, Settings, X, Plus } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { Speaker } from '@/lib/supabase'
 
@@ -126,7 +126,7 @@ export default function Upload({ onUpload, uploading }: UploadProps) {
             </div>
           ) : (
             <div className="space-y-4">
-              <Upload className="w-16 h-16 mx-auto text-gray-400" />
+              <UploadIcon className="w-16 h-16 mx-auto text-gray-400" />
               <div>
                 <p className="text-xl font-semibold text-gray-700">
                   {isDragActive ? 'วางไฟล์ที่นี่...' : 'ลากไฟล์มาวางที่นี่'}

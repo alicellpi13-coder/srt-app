@@ -53,31 +53,41 @@ export default function StatusTracker({ jobId, onComplete }: StatusTrackerProps)
     fetchJobStatus()
 
     // Subscribe to real-time updates
-    const subscription = supabase
-      .channel(`job-${jobId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'jobs',
-          filter: `id=eq.${jobId}`
-        },
-        (payload) => {
-          setJob(payload.new as Job)
-          if (payload.new.status === 'completed' && onComplete) {
-            onComplete(payload.new as Job)
+    let subscription = null
+    if (supabase) {
+      subscription = supabase
+        .channel(`job-${jobId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'jobs',
+            filter: `id=eq.${jobId}`
+          },
+          (payload) => {
+            setJob(payload.new as Job)
+            if (payload.new.status === 'completed' && onComplete) {
+              onComplete(payload.new as Job)
+            }
           }
-        }
-      )
-      .subscribe()
+        )
+        .subscribe()
+    }
 
     return () => {
-      subscription.unsubscribe()
+      if (subscription) {
+        subscription.unsubscribe()
+      }
     }
   }, [jobId, onComplete])
 
   async function fetchJobStatus() {
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     try {
       const { data, error } = await supabase
         .from('jobs')
