@@ -74,7 +74,7 @@ export default function Home() {
       }
 
       // Get API URL from environment
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://alizzlolp11-srt-generation-api.hf.space'
 
       // Upload to FastAPI backend
       const response = await fetch(`${apiUrl}/upload`, {
