@@ -9,6 +9,7 @@ import { Speaker } from '@/lib/supabase'
 interface UploadProps {
   onUpload: (file: File, options: UploadOptions) => Promise<void>
   uploading: boolean
+  speakers?: Speaker[]
 }
 
 interface UploadOptions {
@@ -18,7 +19,7 @@ interface UploadOptions {
   speakers: Speaker[]
 }
 
-export default function Upload({ onUpload, uploading }: UploadProps) {
+export default function Upload({ onUpload, uploading, speakers = [] }: UploadProps) {
   const [file, setFile] = useState<File | null>(null)
   const [programName, setProgramName] = useState('')
   const [showOptions, setShowOptions] = useState(false)
@@ -126,11 +127,14 @@ export default function Upload({ onUpload, uploading }: UploadProps) {
       return
     }
 
+    // Merge speakers from props with local state
+    const allSpeakers = [...speakers, ...speakers]
+
     await onUpload(file, {
       programName: programName.trim(),
       teachTxt: teachTxtFile || undefined,
       teachAudio: teachAudioFile || undefined,
-      speakers: speakers.filter(s => s.id && s.name)
+      speakers: allSpeakers.filter(s => s.id && s.name)
     })
   }
 
