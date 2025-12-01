@@ -194,7 +194,11 @@ export default function Home() {
         </div>
 
         {/* Upload Component */}
-        <Upload onUpload={handleUpload} uploading={uploading} />
+        <Upload
+          onUpload={handleUpload}
+          uploading={uploading}
+          speakers={speakers}
+        />
 
         {/* Recent Jobs */}
         {recentJobs.length > 0 && (
