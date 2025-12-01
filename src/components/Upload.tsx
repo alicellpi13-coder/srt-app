@@ -23,7 +23,7 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
   const [file, setFile] = useState<File | null>(null)
   const [programName, setProgramName] = useState('')
   const [showOptions, setShowOptions] = useState(false)
-  const [speakers, setSpeakers] = useState<Speaker[]>([])
+  const [localSpeakers, setLocalSpeakers] = useState<Speaker[]>([])
   const [newSpeaker, setNewSpeaker] = useState({ id: '', name: '', comment: '' })
   const [teachTxtFile, setTeachTxtFile] = useState<File | null>(null)
   const [teachAudioFile, setTeachAudioFile] = useState<File | null>(null)
@@ -128,7 +128,7 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
     }
 
     // Merge speakers from props with local state
-    const allSpeakers = [...speakers, ...speakers]
+    const allSpeakers = [...speakers, ...localSpeakers]
 
     await onUpload(file, {
       programName: programName.trim(),
@@ -144,12 +144,12 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
       return
     }
 
-    setSpeakers([...speakers, { ...newSpeaker }])
+    setLocalSpeakers([...localSpeakers, { ...newSpeaker }])
     setNewSpeaker({ id: '', name: '', comment: '' })
   }
 
   const removeSpeaker = (index: number) => {
-    setSpeakers(speakers.filter((_, i) => i !== index))
+    setLocalSpeakers(localSpeakers.filter((_, i) => i !== index))
   }
 
   const removeTeachTxtFile = () => {
@@ -346,7 +346,7 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
                 ข้อมูลผู้พูด (ID:ชื่อ:ลักษณะ)
               </label>
 
-              {speakers.map((speaker, index) => (
+              {localSpeakers.map((speaker, index) => (
                 <div key={index} className="flex gap-2 mb-2">
                   <input
                     type="text"

@@ -197,7 +197,6 @@ export default function Home() {
         <Upload
           onUpload={handleUpload}
           uploading={uploading}
-          speakers={speakers}
         />
 
         {/* Recent Jobs */}
