@@ -41,8 +41,8 @@ export default function Home() {
     file: File,
     options: {
       programName: string
-      teachTxt?: string
-      teachAudio?: string
+      teachTxt?: File
+      teachAudio?: File
       speakers: Speaker[]
     }
   ) => {
@@ -62,11 +62,11 @@ export default function Home() {
       formData.append('program_name', options.programName)
 
       if (options.teachTxt) {
-        formData.append('teach_txt', options.teachTxt)
+        formData.append('teach_txt_file', options.teachTxt)
       }
 
       if (options.teachAudio) {
-        formData.append('teach_audio', options.teachAudio)
+        formData.append('teach_audio_file', options.teachAudio)
       }
 
       if (options.speakers.length > 0) {
