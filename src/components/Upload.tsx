@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Upload as UploadIcon, FileAudio, FileVideo, Settings, X, Plus } from 'lucide-react'
 import { toast } from 'react-hot-toast'
@@ -23,10 +23,43 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
   const [file, setFile] = useState<File | null>(null)
   const [programName, setProgramName] = useState('')
   const [showOptions, setShowOptions] = useState(false)
-  const [localSpeakers, setLocalSpeakers] = useState<Speaker[]>([])
+  const [localSpeakers, setLocalSpeakers] = useState<Speaker[]>([
+    { id: '1', name: 'PIDE', comment: 'สมาชิก GELBOYS' },
+    { id: '2', name: 'NEW', comment: 'สมาชิก GELBOYS' },
+    { id: '3', name: 'LEON', comment: 'สมาชิก GELBOYS' },
+    { id: '4', name: 'PJ', comment: 'สมาชิก GELBOYS' }
+  ])
   const [newSpeaker, setNewSpeaker] = useState({ id: '', name: '', comment: '' })
   const [teachTxtFile, setTeachTxtFile] = useState<File | null>(null)
   const [teachAudioFile, setTeachAudioFile] = useState<File | null>(null)
+
+  // Load default files from public folder (only on initial load)
+  useEffect(() => {
+    const loadDefaultFiles = async () => {
+      try {
+        // Fetch default teaching text file
+        const txtResponse = await fetch('/default-files/GELTYEP4.txt')
+        if (txtResponse.ok) {
+          const txtBlob = await txtResponse.blob()
+          const txtFile = new File([txtBlob], 'GELTYEP4.txt', { type: 'text/plain' })
+          setTeachTxtFile(txtFile)
+          console.log('Loaded default teaching text file')
+        }
+
+        // Fetch default teaching audio file
+        const audioResponse = await fetch('/default-files/GELTYEP4.mp3')
+        if (audioResponse.ok) {
+          const audioBlob = await audioResponse.blob()
+          const audioFile = new File([audioBlob], 'GELTYEP4.mp3', { type: 'audio/mpeg' })
+          setTeachAudioFile(audioFile)
+          console.log('Loaded default teaching audio file')
+        }
+      } catch (error) {
+        console.error('Error loading default files:', error)
+      }
+    }
+    loadDefaultFiles()
+  }, []) // Run only once on component mount
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return
@@ -132,8 +165,8 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
 
     await onUpload(file, {
       programName: programName.trim(),
-      teachTxt: teachTxtFile || undefined,
-      teachAudio: teachAudioFile || undefined,
+      teachTxt: teachTxtFile || null, // null means use default file
+      teachAudio: teachAudioFile || null, // null means use default file
       speakers: allSpeakers.filter(s => s.id && s.name)
     })
   }
@@ -239,6 +272,9 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
         {showOptions && (
           <div className="mt-6 space-y-6 p-6 bg-gray-50 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-800">Teach AI - สอน AI ให้เรียนรู้สไตล์ของคุณ</h3>
+            <p className="text-sm text-gray-600">
+              *หากไม่อัปโหลดไฟล์ ระบบจะใช้ไฟล์ตัวอย่าง (GELTYEP4) และข้อมูลผู้พูด GELBOYS เป็นค่าเริ่มต้น
+            </p>
 
             {/* Teaching Text File */}
             <div>
