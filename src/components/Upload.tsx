@@ -165,8 +165,8 @@ export default function Upload({ onUpload, uploading, speakers = [] }: UploadPro
 
     await onUpload(file, {
       programName: programName.trim(),
-      teachTxt: teachTxtFile || null, // null means use default file
-      teachAudio: teachAudioFile || null, // null means use default file
+      teachTxt: teachTxtFile || undefined, // undefined means use default file
+      teachAudio: teachAudioFile || undefined, // undefined means use default file
       speakers: allSpeakers.filter(s => s.id && s.name)
     })
   }
